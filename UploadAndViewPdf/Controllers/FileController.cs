@@ -12,11 +12,11 @@ namespace UploadAndViewPdf.Controllers
 {
     public class FileController : Controller
     {
-        IHostingEnvironment _hostingEnvironment = null;
+        IWebHostEnvironment _hostEnvironment = null;
 
-        public FileController(IHostingEnvironment hostingEnvironment)
+        public FileController(IWebHostEnvironment hostEnvironment)
         {
-            _hostingEnvironment = hostingEnvironment;
+            _hostEnvironment = hostEnvironment;
         }
 
         [HttpGet]
@@ -25,7 +25,7 @@ namespace UploadAndViewPdf.Controllers
             FilesModel fileObj = new FilesModel();
             fileObj.Name = fileName;
 
-            string path = $"{_hostingEnvironment.WebRootPath}\\files\\";
+            string path = $"{_hostEnvironment.WebRootPath}\\files\\";
             int nId = 1;
 
             foreach(string pdfPath in Directory.EnumerateFiles(path, "*.pdf"))
@@ -42,9 +42,9 @@ namespace UploadAndViewPdf.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(IFormFile file, [FromServices] IHostingEnvironment hostingEnvironment)
+        public IActionResult Index(IFormFile file, [FromServices] IWebHostEnvironment hostEnvironment)
         {
-            string fileName = $"{hostingEnvironment.WebRootPath}\\files\\{file.FileName}";
+            string fileName = $"{hostEnvironment.WebRootPath}\\files\\{file.FileName}";
             using (FileStream fileStream = System.IO.File.Create(fileName))
             {
                 file.CopyTo(fileStream);
@@ -55,7 +55,7 @@ namespace UploadAndViewPdf.Controllers
 
         public IActionResult PdfViewerNewTab(string fileName) 
         {
-            string path = _hostingEnvironment.WebRootPath+"\\files\\"+fileName;
+            string path = _hostEnvironment.WebRootPath+"\\files\\"+fileName;
             return File(System.IO.File.ReadAllBytes(path), "application/pdf");
         }
     }
